@@ -11,9 +11,8 @@ let translations = {
     grid: "Grid:",
     none: "None",
     standard: "Standard",
-    partial: "Partial",
     vertical: "Vertical",
-    full: "Full",
+    horizontal: "Horizontal",
     ghost: "Ghost:",
     themeColor: "Theme Color:",
     default: "Default",
@@ -48,9 +47,8 @@ let translations = {
     grid: "Grille :",
     none: "Aucun",
     standard: "Standard",
-    partial: "Partielle",
     vertical: "Verticale",
-    full: "Pleine",
+    horizontal: "Horizontale",
     ghost: "Fantôme :",
     themeColor: "Couleur du thème :",
     default: "Par défaut",
@@ -85,9 +83,8 @@ let translations = {
     grid: "Rejilla:",
     none: "Ninguno",
     standard: "Estándar",
-    partial: "Parcial",
     vertical: "Vertical",
-    full: "Completa",
+    horizontal: "Horizontal",
     ghost: "Fantasma:",
     themeColor: "Color de tema:",
     default: "Por defecto",
@@ -142,6 +139,9 @@ function updateLanguage() {
     translation.instructionsText;
   document.querySelector('label[for="grid"]').textContent = translation.grid;
   document.querySelector('option[value="none"]').textContent = translation.none;
+  document.querySelector('option[value="standard"]').textContent = translation.standard;
+  document.querySelector('option[value="vertical"]').textContent = translation.vertical;
+  document.querySelector('option[value="horizontal"]').textContent = translation.horizontal;
   document.querySelector('label[for="ghost"]').textContent = translation.ghost;
   document.querySelector('label[for="theme-color"]').textContent =
     translation.themeColor;

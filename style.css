@@ -202,8 +202,8 @@ body {
 
 #score-frame {
   position: fixed;
-  top: 10px; /* Modifier en fonction des besoins */
-  left: -115px; /* Modifier en fonction des besoins */
+  top: 10px;
+  left: 10px;
   color: var(--secondary-color);
   padding: 20px;
   border-radius: 15px;
@@ -211,8 +211,8 @@ body {
 
 #time-frame {
   position: fixed;
-  top: 10px; /* Modifier en fonction des besoins */
-  right: -123px; /* Modifier en fonction des besoins */
+  top: 10px;
+  right: 10px;
   color: var(--secondary-color);
   padding: 20px;
   border-radius: 15px;

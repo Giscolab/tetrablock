@@ -1,17 +1,11 @@
 /*jshint esversion: 6 */
 /* jshint browser: true */
-let gameSettings = {
-	grid: "standard",
-	ghost: false,
-	themeColor: "default",
-	blockSpeed: 5,
-	sound: true,
-	visualEffects: true,
-	language: "french",
-};
+/* global gameSettings, applyTheme */
 // Initialisation des variables score et lines à 0
 let score = 0;
 let lines = 0;
+// Reference globale au conteneur modal
+let modal;
 // Fonction qui génère un nombre aléatoire entre un minimum et un maximum inclus
 function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min);
@@ -151,6 +145,30 @@ function showGameOver() {
 			startNewGame(); // Redémarrer le jeu
 		});
 }
+
+function startNewGame() {
+        // Réinitialiser le score et les lignes
+        score = 0;
+        lines = 0;
+        document.getElementById("score-content").textContent = score;
+        document.getElementById("time-content").textContent = lines;
+
+        // Réinitialiser le plateau de jeu
+        playfield = [];
+        for (let row = -2; row < 20; row++) {
+                playfield[row] = [];
+                for (let col = 0; col < 10; col++) {
+                        playfield[row][col] = 0;
+                }
+        }
+
+        // Réinitialiser la séquence et le tetromino courant
+        tetrominoSequence = [];
+        tetromino = getNextTetromino();
+        count = 0;
+        gameOver = false;
+        rAF = requestAnimationFrame(loop);
+}
 const canvas = document.getElementById("game-canvas");
 const context = canvas.getContext("2d");
 // On définit la taille des cases et on prépare le terrain de jeu et la séquence de tétraminos
@@ -203,8 +221,7 @@ let gameOver = false;
 /////////////////////////////////////
 // Fonction principale du jeu, exécutée en boucle
 function drawGrid() {
-	console.log("drawGrid est appelée");
-	context.strokeStyle = "white"; // changez cela pour la couleur de votre choix;
+        context.strokeStyle = "white"; // changez cela pour la couleur de votre choix;
 	if (gridOption === "none") {
 		// Ne dessine rien
 	}
@@ -244,10 +261,9 @@ function drawGrid() {
 }
 // Gestion de l'option Ghost Mode
 document.getElementById("ghost")
-	.addEventListener("change", function() {
-		gameSettings.ghost = this.checked; // Met à jour l'état du mode fantôme
-		console.log(`Mode fantôme : ${gameSettings.ghost ? "activé" : "désactivé"}`);
-	});
+        .addEventListener("change", function() {
+                gameSettings.ghost = this.checked; // Met à jour l'état du mode fantôme
+        });
 // Fonction pour cloner le tétramino
 function cloneTetromino(tetromino) {
 	return {
@@ -302,7 +318,7 @@ function loop() {
 	}
 	// On gère la descente et le dessin du tétramino actif
 	if (tetromino) {
-		if (++count > 35 - Math.floor(score / 10)) {
+                if (++count > (40 - gameSettings.blockSpeed * 2) - Math.floor(score / 10)) {
 			tetromino.row++;
 			count = 0;
 			if (!isValidMove(tetromino.matrix, tetromino.row, tetromino.col)) {
@@ -415,28 +431,20 @@ document.getElementById("start-button")
 		rAF = requestAnimationFrame(loop);
 	});
 document.addEventListener("DOMContentLoaded", () => {
-	// Fonction pour faire descendre un bloc
-	function moveBlockDown() {
-		// Code pour faire descendre un bloc
-	}
-	// Interval pour déplacer le bloc vers le bas
-	let moveBlockInterval = setInterval(moveBlockDown, 1000 / gameSettings.blockSpeed);
 	document.getElementById("grid")
 		.addEventListener("change", function() {
 			gameSettings.grid = this.value;
 		});
-	document.getElementById("theme-color")
-		.addEventListener("change", function() {
-			gameSettings.themeColor = this.value;
-		});
+        document.getElementById("theme-color")
+                .addEventListener("change", function() {
+                        gameSettings.themeColor = this.value;
+                        applyTheme(this.value);
+                });
 	// Écouteur d'événements pour mettre à jour la vitesse des blocs
-	document.getElementById("block-speed")
-		.addEventListener("change", function() {
-			gameSettings.blockSpeed = this.value;
-			// Mettre à jour l'intervalle
-			clearInterval(moveBlockInterval);
-			moveBlockInterval = setInterval(moveBlockDown, 1000 / gameSettings.blockSpeed);
-		});
+        document.getElementById("block-speed")
+                .addEventListener("change", function() {
+                        gameSettings.blockSpeed = Number(this.value);
+                });
 	document.getElementById("sound")
 		.addEventListener("change", function() {
 			gameSettings.sound = this.checked;
@@ -449,16 +457,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		.addEventListener("change", function() {
 			gameSettings.language = this.value;
 		});
-	let blockSpeedSelect = document.getElementById("block-speed");
-	let gridSelect = document.getElementById("grid");
-	blockSpeedSelect.addEventListener("change", function() {
-		let selectedBlockSpeed = blockSpeedSelect.value;
-		console.log("Vitesse de chute des blocs sélectionnée : " + selectedBlockSpeed);
-	});
-	gridSelect.addEventListener("change", function() {
-		let selectedGrid = gridSelect.value;
-		console.log("Grille sélectionnée : " + selectedGrid);
-	});
+        let blockSpeedSelect = document.getElementById("block-speed");
+        let gridSelect = document.getElementById("grid");
 	let menu = document.getElementById("menu");
 	let menuItems = Array.from(menu.getElementsByClassName("menu-item"));
 	let containers = Array.from(document.getElementsByClassName("container"));
@@ -502,42 +502,37 @@ document.addEventListener("DOMContentLoaded", () => {
 	menuMusic.pause();
 	menuMusic.currentTime = 0;
 	let soundCheckbox = document.getElementById("sound");
-	soundCheckbox.addEventListener("change", function() {
-		console.log("Checkbox state changed: ", this.checked); // Ajout de cette ligne pour le débogage
-		if (this.checked) {
-			menuMusic.play();
-		}
-		else {
-			menuMusic.pause();
-			menuMusic.currentTime = 0;
-		}
-	});
+        soundCheckbox.addEventListener("change", function() {
+                if (this.checked) {
+                        menuMusic.play();
+                }
+                else {
+                        menuMusic.pause();
+                        menuMusic.currentTime = 0;
+                }
+        });
 	// Récupérer la référence de la fenêtre modale et du bouton de démarrage
-	const modal = document.getElementById("modal");
+        modal = document.getElementById("modal");
 	// Fonctions pour chaque action du menu
-	function startGame() {
-		closeModal();
-		// Ajoutez ici le code pour démarrer votre jeu
-		console.log("Game Started");
-	}
+        function startGame() {
+                closeModal();
+                // Ajoutez ici le code pour démarrer votre jeu
+        }
 
-	function showInstructions() {
-		closeModal();
-		// Ajoutez ici le code pour afficher les instructions
-		console.log("Showing Instructions");
-	}
+        function showInstructions() {
+                closeModal();
+                // Ajoutez ici le code pour afficher les instructions
+        }
 
-	function showScores() {
-		closeModal();
-		// Ajoutez ici le code pour afficher les meilleurs scores
-		console.log("Showing Scores");
-	}
+        function showScores() {
+                closeModal();
+                // Ajoutez ici le code pour afficher les meilleurs scores
+        }
 
-	function showOptions() {
-		closeModal();
-		// Ajoutez ici le code pour afficher les options
-		console.log("Showing Options");
-	}
+        function showOptions() {
+                closeModal();
+                // Ajoutez ici le code pour afficher les options
+        }
 	// Fonction pour afficher la fenêtre modale
 	function showModal() {
 		modal.style.display = "flex";

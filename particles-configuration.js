@@ -94,15 +94,14 @@ particlesJS("particles-js", {
 });
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Initialisation du compteur de particules et des statistiques
-//deux barres obliques pour garder ces variables en cas de besin il suffit juste de supprimer les//
-//var count_particles, stats, update;
+//var stats, update; // Variables conservées pour un usage futur si nécessaire
 //stats = new Stats(); // Création d'un nouvel objet Stats pour afficher les statistiques
 //stats.setMode(0); // Configuration du mode de statistiques (0 pour fps, 1 pour ms, 2 pour mb, 3+ pour des modes personnalisés)
 //stats.domElement.style.position = "absolute"; // Positionnement de l'élément de statistiques
 //stats.domElement.style.left = "0px"; // Positionnement à gauche de l'élément de statistiques
 //stats.domElement.style.top = "0px"; // Positionnement en haut de l'élément de statistiques
 // Sélection de l'élément DOM avec la classe "js-count-particles"
-//count_particles = document.querySelector(".js-count-particles");
+var count_particles = document.querySelector(".js-count-particles");
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Définition de la fonction de mise à jour
 update = function () {
@@ -114,8 +113,10 @@ update = function () {
 
   // Vérification de l'existence des particules
   if (window.pJSDom[0].pJS.particles && window.pJSDom[0].pJS.particles.array) {
-    // Mise à jour du nombre de particules affichées
-    count_particles.innerText = window.pJSDom[0].pJS.particles.array.length;
+    // Mise à jour du nombre de particules affichées si le compteur existe
+    if (count_particles) {
+      count_particles.innerText = window.pJSDom[0].pJS.particles.array.length;
+    }
   }
 
   // Appel de la fonction update à la prochaine rafraîchissement de l'écran

@@ -145,7 +145,13 @@
     </div>
 
     <div id="game-container" class="container">
-      <canvas id="game-canvas" width="320" height="640"></canvas>
+      <div id="play-area">
+        <canvas id="game-canvas" width="320" height="640"></canvas>
+        <div id="preview-panel">
+          <h2>Next</h2>
+          <canvas id="preview-canvas" width="128" height="128"></canvas>
+        </div>
+      </div>
 
       <div id="controls">
         <button id="deplacer-gauche">Déplacer à gauche</button>

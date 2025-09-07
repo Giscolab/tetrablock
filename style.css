@@ -304,6 +304,27 @@ h1, h2 {
     image-rendering: pixelated;
 }
 
+#play-area {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+#preview-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--text-primary);
+}
+
+#preview-canvas {
+    border: 4px solid var(--primary-color);
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(var(--primary-color), var(--glow-intensity));
+    background: #000;
+    image-rendering: pixelated;
+}
+
 /* ========================================
    CONTRÔLES
 ======================================== */

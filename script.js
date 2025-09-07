@@ -108,8 +108,30 @@ function placeTetromino() {
 			}
 		}
 	}
-	// On récupère le prochain tétramino
-	tetromino = getNextTetromino();
+        // On récupère le prochain tétramino et met à jour la prévisualisation
+        tetromino = nextTetromino;
+        nextTetromino = getNextTetromino();
+        drawPreview();
+}
+
+function drawPreview() {
+        previewContext.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+        const matrix = nextTetromino.matrix;
+        previewContext.fillStyle = colors[nextTetromino.name];
+        previewContext.strokeStyle = "black";
+        previewContext.lineWidth = 3;
+        const offsetX = Math.floor((previewCanvas.width / previewGrid - matrix[0].length) / 2);
+        const offsetY = Math.floor((previewCanvas.height / previewGrid - matrix.length) / 2);
+        for (let row = 0; row < matrix.length; row++) {
+                for (let col = 0; col < matrix[row].length; col++) {
+                        if (matrix[row][col]) {
+                                const x = (col + offsetX) * previewGrid;
+                                const y = (row + offsetY) * previewGrid;
+                                previewContext.fillRect(x, y, previewGrid, previewGrid);
+                                previewContext.strokeRect(x, y, previewGrid, previewGrid);
+                        }
+                }
+        }
 }
 
 function showGameOver() {
@@ -153,17 +175,22 @@ function startNewGame() {
                 }
         }
 
-        // Réinitialiser la séquence et le tetromino courant
+        // Réinitialiser la séquence et les tétraminos courant et suivant
         tetrominoSequence = [];
         tetromino = getNextTetromino();
+        nextTetromino = getNextTetromino();
+        drawPreview();
         count = 0;
         gameOver = false;
         rAF = requestAnimationFrame(loop);
 }
 const canvas = document.getElementById("game-canvas");
 const context = canvas.getContext("2d");
+const previewCanvas = document.getElementById("preview-canvas");
+const previewContext = previewCanvas.getContext("2d");
 // On définit la taille des cases et on prépare le terrain de jeu et la séquence de tétraminos
 const grid = 32;
+const previewGrid = 32;
 let tetrominoSequence = [];
 let playfield = [];
 // On prépare le terrain de jeu
@@ -195,17 +222,19 @@ const tetrominos = Object.fromEntries(Object.entries(tetrominoShapes)
 	]));
 // On définit les couleurs des différents tétraminos
 const colors = {
-	I: "cyan",
-	O: "yellow",
-	T: "purple",
-	S: "green",
-	Z: "red",
-	J: "blue",
-	L: "orange",
+        I: "cyan",
+        O: "yellow",
+        T: "purple",
+        S: "green",
+        Z: "red",
+        J: "blue",
+        L: "orange",
 };
 // On initialise quelques variables
 let count = 0;
 let tetromino = getNextTetromino();
+let nextTetromino = getNextTetromino();
+drawPreview();
 let rAF = null;
 let gameOver = false;
 //////////////////////////////////////

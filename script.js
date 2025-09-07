@@ -435,11 +435,38 @@ document.addEventListener("DOMContentLoaded", () => {
 		.addEventListener("change", function() {
 			gameSettings.grid = this.value;
 		});
-        document.getElementById("theme-color")
-                .addEventListener("change", function() {
-                        gameSettings.themeColor = this.value;
+        const themeSelect = document.getElementById("theme-color");
+        const customThemeContainer = document.getElementById("custom-theme");
+
+        function getCustomTheme() {
+                return {
+                        background: document.getElementById("custom-bg").value,
+                        border: document.getElementById("custom-border").value,
+                        text: document.getElementById("custom-text").value,
+                };
+        }
+
+        themeSelect.addEventListener("change", function() {
+                gameSettings.themeColor = this.value;
+                if (this.value === "custom") {
+                        customThemeContainer.style.display = "block";
+                        gameSettings.customTheme = getCustomTheme();
+                        applyTheme(gameSettings.customTheme);
+                } else {
+                        customThemeContainer.style.display = "none";
                         applyTheme(this.value);
-                });
+                }
+        });
+
+        ["custom-bg", "custom-border", "custom-text"].forEach((id) => {
+                document.getElementById(id)
+                        .addEventListener("input", () => {
+                                if (themeSelect.value === "custom") {
+                                        gameSettings.customTheme = getCustomTheme();
+                                        applyTheme(gameSettings.customTheme);
+                                }
+                        });
+        });
 	// Écouteur d'événements pour mettre à jour la vitesse des blocs
         document.getElementById("block-speed")
                 .addEventListener("change", function() {

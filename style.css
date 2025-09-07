@@ -358,6 +358,15 @@ h1, h2 {
     cursor: pointer;
 }
 
+#custom-theme {
+    display: none;
+    margin-top: 10px;
+}
+
+#custom-theme label {
+    margin-right: 5px;
+}
+
 /* ========================================
    ANIMATIONS
 ======================================== */

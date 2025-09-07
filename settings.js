@@ -14,13 +14,17 @@ window.gameSettings = {
 function applyTheme(color) {
         const root = document.documentElement;
         const themes = {
-                default: "#5A65F1",
-                blue: "#1e90ff",
-                red: "#ff4d4d",
-                green: "#2ecc71",
-                purple: "#9b59b6",
+                default: { primary: "#5A65F1", secondary: "#ff00ff" },
+                blue: { primary: "#00bfff", secondary: "#0099cc" },
+                red: { primary: "#ff4500", secondary: "#ff6347" },
+                green: { primary: "#32cd32", secondary: "#90ee90" },
+                purple: { primary: "#ba55d3", secondary: "#da70d6" },
         };
-        root.style.setProperty("--clr", themes[color] || themes.default);
+        const theme = themes[color] || themes.default;
+        root.style.setProperty("--primary-color", theme.primary);
+        if (theme.secondary) {
+                root.style.setProperty("--secondary-color", theme.secondary);
+        }
 }
 
 applyTheme(window.gameSettings.themeColor);

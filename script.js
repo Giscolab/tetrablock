@@ -6,6 +6,38 @@ let score = 0;
 let lines = 0;
 // Reference globale au conteneur modal
 let modal;
+const SCORE_STORAGE_KEY = 'tetrablock-scores';
+
+function loadScores() {
+        return JSON.parse(localStorage.getItem(SCORE_STORAGE_KEY)) || [];
+}
+
+function saveScore(newScore) {
+        const scores = loadScores();
+        scores.push(newScore);
+        scores.sort((a, b) => b - a);
+        localStorage.setItem(SCORE_STORAGE_KEY, JSON.stringify(scores.slice(0, 5)));
+}
+
+function updateScoreDisplay() {
+        const list = document.getElementById('score-list');
+        if (!list) return;
+        const scores = loadScores();
+        list.innerHTML = '';
+        if (scores.length === 0) {
+                const li = document.createElement('li');
+                li.textContent = '-';
+                list.appendChild(li);
+        }
+        else {
+                scores.forEach((s) => {
+                        const li = document.createElement('li');
+                        li.textContent = s;
+                        list.appendChild(li);
+                });
+        }
+}
+
 // Fonction qui génère un nombre aléatoire entre un minimum et un maximum inclus
 function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min);
@@ -115,6 +147,8 @@ function placeTetromino() {
 function showGameOver() {
 	cancelAnimationFrame(rAF); // Arrêter l'animation
 	gameOver = true;
+        saveScore(score);
+        updateScoreDisplay();
 	// Créer une fenêtre modale dynamique
 	const modal = document.createElement('div');
 	modal.id = 'game-over-modal';
@@ -460,6 +494,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let blockSpeedSelect = document.getElementById("block-speed");
         let gridSelect = document.getElementById("grid");
 	let menu = document.getElementById("menu");
+        updateScoreDisplay();
 	let menuItems = Array.from(menu.getElementsByClassName("menu-item"));
 	let containers = Array.from(document.getElementsByClassName("container"));
 	menuItems.forEach((item) => {
@@ -497,6 +532,11 @@ document.addEventListener("DOMContentLoaded", () => {
 	hideElement("close-score-button", "score-container", "score-started");
 	showElement("options-button", "options-container", "options-started");
 	hideElement("close-options-button", "options-container", "options-started");
+        document.getElementById("high-scores-button").addEventListener("click", updateScoreDisplay);
+        document.getElementById("reset-scores").addEventListener("click", function() {
+                localStorage.removeItem(SCORE_STORAGE_KEY);
+                updateScoreDisplay();
+        });
 	let menuMusic = document.getElementById("menu-music");
 	menuMusic.play();
 	menuMusic.pause();
@@ -526,7 +566,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         function showScores() {
                 closeModal();
-                // Ajoutez ici le code pour afficher les meilleurs scores
+                updateScoreDisplay();
         }
 
         function showOptions() {

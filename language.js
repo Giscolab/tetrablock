@@ -24,6 +24,7 @@ let translations = {
     sound: "Sound:",
     visualEffects: "Visual Effects:",
     language: "Language:",
+    resetScores: "Reset Scores",
     french: "French",
     english: "English",
     spanish: "Spanish",
@@ -60,6 +61,7 @@ let translations = {
     sound: "Son :",
     visualEffects: "Effets visuels :",
     language: "Langue :",
+    resetScores: "Réinitialiser les scores",
     french: "Français",
     english: "Anglais",
     spanish: "Espagnol",
@@ -96,6 +98,7 @@ let translations = {
     sound: "Sonido:",
     visualEffects: "Efectos visuales:",
     language: "Idioma:",
+    resetScores: "Restablecer puntuaciones",
     french: "Francés",
     english: "Inglés",
     spanish: "Español",
@@ -131,6 +134,7 @@ function updateLanguage() {
   document
     .getElementById("high-scores-button")
     .setAttribute("aria-label", translation.highScores);
+  document.getElementById("score-title").textContent = translation.highScores;
   document.getElementById("options-button").textContent = translation.options;
   document
     .getElementById("options-button")
@@ -154,6 +158,10 @@ function updateLanguage() {
     translation.visualEffects;
   document.querySelector('label[for="language"]').textContent =
     translation.language;
+  document.getElementById("reset-scores").textContent = translation.resetScores;
+  document
+    .getElementById("reset-scores")
+    .setAttribute("aria-label", translation.resetScores);
 }
 
 document.getElementById("language").addEventListener("change", function () {

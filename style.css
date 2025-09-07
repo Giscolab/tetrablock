@@ -476,12 +476,12 @@ h1, h2 {
 }
 
 #score-frame { top: 10px; left: 10px; }
-#time-frame { top: 10px; right: 10px; }
+#lines-frame { top: 10px; right: 10px; }
 
 /* ========================================
    CONTENU DYNAMIQUE
 ======================================== */
-#score-content, #time-content {
+#score-content, #lines-content {
     font-family: var(--font-code);
     font-size: 1.5rem;
     font-weight: bold;

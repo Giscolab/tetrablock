@@ -427,7 +427,6 @@ h1, h2 {
    BOUTONS RETOUR
 ======================================== */
 .back-button {
-    @extend .custom-button; /* si SASS, sinon copier le style */
     background: linear-gradient(45deg, #1e293b, #334155);
     border: 2px solid var(--secondary-color);
     color: var(--text-primary);

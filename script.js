@@ -118,17 +118,8 @@ function showGameOver() {
 	// Créer une fenêtre modale dynamique
 	const modal = document.createElement('div');
 	modal.id = 'game-over-modal';
-	modal.style.position = 'fixed';
-	modal.style.top = '50%';
-	modal.style.left = '50%';
-	modal.style.transform = 'translate(-50%, -50%)';
-	modal.style.background = 'rgba(0, 0, 0, 0.8)';
-	modal.style.color = 'white';
-	modal.style.padding = '20px';
-	modal.style.borderRadius = '10px';
-	modal.style.textAlign = 'center';
-	modal.style.zIndex = '1000'; // Assurez-vous qu'il apparaît au-dessus de tout
-	// Contenu de la modale
+        modal.classList.add('game-over-modal');
+        // Contenu de la modale
 	modal.innerHTML = `
     <h1>GAME OVER!</h1>
     <p>Score: ${score}</p>

@@ -563,9 +563,11 @@ function showMainMenu() {
 	// Afficher la fenêtre modale
 	modal.style.display = "flex";
 }
-// Récupérer le bouton "Retour" dans chaque menu
+// Récupérer le bouton "Retour" du jeu et vérifier son existence
 let menuBackButton = document.getElementById("menu-back-button");
-// Ajouter un événement de clic au bouton "Retour" dans chaque menu
-menuBackButton.addEventListener("click", function() {
-	showMainMenu();
-});
+if (menuBackButton) {
+        // Ajouter un événement de clic au bouton "Retour" dans chaque menu
+        menuBackButton.addEventListener("click", function() {
+                showMainMenu();
+        });
+}

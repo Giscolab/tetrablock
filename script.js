@@ -108,8 +108,9 @@ function placeTetromino() {
 			}
 		}
 	}
-	// On récupère le prochain tétramino
-	tetromino = getNextTetromino();
+        // On récupère le prochain tétramino
+        tetromino = getNextTetromino();
+        holdUsed = false;
 }
 
 function showGameOver() {
@@ -162,19 +163,26 @@ function startNewGame() {
                 }
         }
 
-        // Réinitialiser la séquence et le tetromino courant
+        // Réinitialiser la séquence, le tetromino courant et la pièce en réserve
         tetrominoSequence = [];
         tetromino = getNextTetromino();
+        holdTetromino = null;
+        holdUsed = false;
+        drawHoldTetromino();
         count = 0;
         gameOver = false;
         rAF = requestAnimationFrame(loop);
 }
 const canvas = document.getElementById("game-canvas");
 const context = canvas.getContext("2d");
+const holdCanvas = document.getElementById("hold-canvas");
+const holdContext = holdCanvas.getContext("2d");
 // On définit la taille des cases et on prépare le terrain de jeu et la séquence de tétraminos
 const grid = 32;
 let tetrominoSequence = [];
 let playfield = [];
+let holdTetromino = null;
+let holdUsed = false;
 // On prépare le terrain de jeu
 for (let row = -2; row < 20; row++) {
 	playfield[row] = [];
@@ -299,6 +307,44 @@ function drawGhostTetromino() {
 	}
 }
 
+function drawHoldTetromino() {
+        holdContext.clearRect(0, 0, holdCanvas.width, holdCanvas.height);
+        if (!holdTetromino) return;
+        const matrix = tetrominos[holdTetromino];
+        const color = colors[holdTetromino];
+        const offsetX = (holdCanvas.width - matrix[0].length * grid) / 2;
+        const offsetY = (holdCanvas.height - matrix.length * grid) / 2;
+        holdContext.fillStyle = color;
+        holdContext.strokeStyle = "black";
+        holdContext.lineWidth = 2;
+        for (let row = 0; row < matrix.length; row++) {
+                for (let col = 0; col < matrix[row].length; col++) {
+                        if (matrix[row][col]) {
+                                holdContext.fillRect(offsetX + col * grid, offsetY + row * grid, grid - 1, grid - 1);
+                                holdContext.strokeRect(offsetX + col * grid, offsetY + row * grid, grid - 1, grid - 1);
+                        }
+                }
+        }
+}
+
+function holdCurrentTetromino() {
+        if (holdUsed) return;
+        if (!holdTetromino) {
+                holdTetromino = tetromino.name;
+                tetromino = getNextTetromino();
+        }
+        else {
+                const current = tetromino.name;
+                const matrix = tetrominos[holdTetromino];
+                const col = playfield[0].length / 2 - Math.ceil(matrix[0].length / 2);
+                const row = holdTetromino === "I" ? -1 : -2;
+                tetromino = { name: holdTetromino, matrix, row, col };
+                holdTetromino = current;
+        }
+        holdUsed = true;
+        drawHoldTetromino();
+}
+
 function loop() {
 	// On demande la prochaine image d'animation
 	rAF = requestAnimationFrame(loop);
@@ -364,16 +410,20 @@ document.addEventListener("keydown", function(e) {
 			tetromino.matrix = matrix;
 		}
 	}
-	// Bas (accélère la descente)
-	if (e.key === "ArrowDown") {
-		const row = tetromino.row + 1;
-		if (!isValidMove(tetromino.matrix, row, tetromino.col)) {
-			tetromino.row = row - 1;
-			placeTetromino();
-			return;
-		}
-		tetromino.row = row;
-	}
+        // Bas (accélère la descente)
+        if (e.key === "ArrowDown") {
+                const row = tetromino.row + 1;
+                if (!isValidMove(tetromino.matrix, row, tetromino.col)) {
+                        tetromino.row = row - 1;
+                        placeTetromino();
+                        return;
+                }
+                tetromino.row = row;
+        }
+        // Hold (pièce en réserve)
+        if (e.key === "Shift") {
+                holdCurrentTetromino();
+        }
 });
 // Événements de boutons de contrôle
 document.getElementById("deplacer-gauche")
@@ -398,14 +448,20 @@ document.getElementById("tourner-gauche")
 		}
 	});
 document.getElementById("tourner-droite")
-	.addEventListener("click", function() {
-		if (!gameOver) {
-			const matrix = rotate(tetromino.matrix);
-			if (isValidMove(matrix, tetromino.row, tetromino.col)) {
-				tetromino.matrix = matrix;
-			}
-		}
-	});
+        .addEventListener("click", function() {
+                if (!gameOver) {
+                        const matrix = rotate(tetromino.matrix);
+                        if (isValidMove(matrix, tetromino.row, tetromino.col)) {
+                                tetromino.matrix = matrix;
+                        }
+                }
+        });
+document.getElementById("hold-piece")
+        .addEventListener("click", function() {
+                if (!gameOver) {
+                        holdCurrentTetromino();
+                }
+        });
 // Gestion de la grille sélectionnée
 const gridSelect = document.getElementById("grid");
 let gridOption = "none"; // Option par défaut pour la grille

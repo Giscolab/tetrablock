@@ -6,6 +6,28 @@ let score = 0;
 let lines = 0;
 // Reference globale au conteneur modal
 let modal;
+
+function loadParticlesEffect() {
+        if (window.particlesJS && window.initParticles) {
+                initParticles();
+        } else {
+                const script = document.createElement("script");
+                script.src = "particles.min.js";
+                script.onload = () => {
+                        const configScript = document.createElement("script");
+                        configScript.src = "particles-configuration.js";
+                        configScript.onload = initParticles;
+                        document.body.appendChild(configScript);
+                };
+                document.body.appendChild(script);
+        }
+}
+function destroyParticlesEffect() {
+        if (window.pJSDom && window.pJSDom.length) {
+                window.pJSDom[0].pJS.fn.vendors.destroypJS();
+                window.pJSDom = [];
+        }
+}
 // Fonction qui génère un nombre aléatoire entre un minimum et un maximum inclus
 function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min);
@@ -450,13 +472,21 @@ document.addEventListener("DOMContentLoaded", () => {
 			gameSettings.sound = this.checked;
 		});
 	document.getElementById("visual-effects")
-		.addEventListener("change", function() {
-			gameSettings.visualEffects = this.checked;
-		});
+                .addEventListener("change", function() {
+                        gameSettings.visualEffects = this.checked;
+                        if (this.checked) {
+                                loadParticlesEffect();
+                        } else {
+                                destroyParticlesEffect();
+                        }
+                });
 	document.getElementById("language")
-		.addEventListener("change", function() {
-			gameSettings.language = this.value;
-		});
+                .addEventListener("change", function() {
+                        gameSettings.language = this.value;
+                });
+        if (gameSettings.visualEffects) {
+                loadParticlesEffect();
+        }
         let blockSpeedSelect = document.getElementById("block-speed");
         let gridSelect = document.getElementById("grid");
 	let menu = document.getElementById("menu");

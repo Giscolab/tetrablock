@@ -173,6 +173,8 @@ const canvas = document.getElementById("game-canvas");
 const context = canvas.getContext("2d");
 // On définit la taille des cases et on prépare le terrain de jeu et la séquence de tétraminos
 const grid = 32;
+canvas.width = grid * 10;
+canvas.height = grid * 20;
 let tetrominoSequence = [];
 let playfield = [];
 // On prépare le terrain de jeu

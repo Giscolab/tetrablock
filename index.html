@@ -15,11 +15,12 @@
     <div id="modal" class="modal">
       <div class="modal-content">
         <!-- Contenu de la fenêtre modale -->
-        <div id="menu">
+        <div id="menu" role="menu">
           <h1>TetraBlock</h1>
           <button
             id="start-button"
             class="menu-item"
+            role="menuitem"
             data-target="game-container"
             aria-label="Start game"
           >
@@ -28,6 +29,7 @@
           <button
             id="instructions-button"
             class="menu-item"
+            role="menuitem"
             data-target="instructions-container"
             aria-label="Instructions"
           >
@@ -36,6 +38,7 @@
           <button
             id="high-scores-button"
             class="menu-item"
+            role="menuitem"
             data-target="score-container"
             aria-label="High scores"
           >
@@ -44,6 +47,7 @@
           <button
             id="options-button"
             class="menu-item"
+            role="menuitem"
             data-target="options-container"
             aria-label="Options"
           >
@@ -141,6 +145,27 @@
         </select>
       </div>
 
+      <div class="option">
+        <label for="key-left">Touche gauche :</label>
+        <input id="key-left" type="text" class="key-input" data-action="moveLeft" />
+      </div>
+      <div class="option">
+        <label for="key-right">Touche droite :</label>
+        <input id="key-right" type="text" class="key-input" data-action="moveRight" />
+      </div>
+      <div class="option">
+        <label for="key-rotate">Rotation :</label>
+        <input id="key-rotate" type="text" class="key-input" data-action="rotate" />
+      </div>
+      <div class="option">
+        <label for="key-drop">Descente rapide :</label>
+        <input id="key-drop" type="text" class="key-input" data-action="drop" />
+      </div>
+      <div class="option">
+        <label for="key-pause">Pause/Reprise :</label>
+        <input id="key-pause" type="text" class="key-input" data-action="pause" />
+      </div>
+
       <button class="back-button" id="close-options-button">Retour</button>
     </div>
 
@@ -152,6 +177,7 @@
         <button id="deplacer-droite">Déplacer à droite</button>
         <button id="tourner-gauche">Tourner à gauche</button>
         <button id="tourner-droite">Tourner à droite</button>
+        <button id="pause-button">Pause</button>
       </div>
       <!-- Cadre pour le score -->
       <div id="score-frame" class="frame">
@@ -166,9 +192,17 @@
       </div>
     </div>
 
+    <div id="pause-overlay" class="modal" style="display: none">
+      <div class="modal-content">
+        <h1>Pause</h1>
+        <button id="resume-button">Reprendre</button>
+      </div>
+    </div>
+
     <div class="particle-frame">
       <div id="particles-js"></div>
     </div>
+    <div id="live-region" aria-live="polite" class="sr-only"></div>
     <script src="particles.min.js"></script>
     <script src="particles-configuration.js"></script>
     <script src="language.js"></script>

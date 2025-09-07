@@ -217,6 +217,41 @@ let count = 0;
 let tetromino = getNextTetromino();
 let rAF = null;
 let gameOver = false;
+let paused = false;
+const defaultKeyBindings = {
+        moveLeft: "ArrowLeft",
+        moveRight: "ArrowRight",
+        rotate: "ArrowUp",
+        drop: "ArrowDown",
+        pause: "p",
+};
+let keyBindings = JSON.parse(localStorage.getItem("keyBindings")) || defaultKeyBindings;
+function saveKeyBindings() {
+        localStorage.setItem("keyBindings", JSON.stringify(keyBindings));
+}
+if (!localStorage.getItem("keyBindings")) {
+        saveKeyBindings();
+}
+const pauseOverlay = document.getElementById("pause-overlay");
+const pauseButton = document.getElementById("pause-button");
+const resumeButton = document.getElementById("resume-button");
+
+function togglePause() {
+        if (paused) {
+                paused = false;
+                pauseOverlay.style.display = "none";
+                pauseButton.textContent = "Pause";
+                rAF = requestAnimationFrame(loop);
+        }
+        else {
+                paused = true;
+                pauseOverlay.style.display = "flex";
+                pauseButton.textContent = "Reprendre";
+                cancelAnimationFrame(rAF);
+        }
+}
+pauseButton.addEventListener("click", togglePause);
+resumeButton.addEventListener("click", togglePause);
 //////////////////////////////////////
 /////////////////////////////////////
 // Fonction principale du jeu, exécutée en boucle
@@ -349,31 +384,34 @@ function loop() {
 }
 // Événements de clavier
 document.addEventListener("keydown", function(e) {
-	if (gameOver) return;
-	// Gauche et droite
-	if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
-		const col = e.key === "ArrowLeft" ? tetromino.col - 1 : tetromino.col + 1;
-		if (isValidMove(tetromino.matrix, tetromino.row, col)) {
-			tetromino.col = col;
-		}
-	}
-	// Haut (rotation)
-	if (e.key === "ArrowUp") {
-		const matrix = rotate(tetromino.matrix);
-		if (isValidMove(matrix, tetromino.row, tetromino.col)) {
-			tetromino.matrix = matrix;
-		}
-	}
-	// Bas (accélère la descente)
-	if (e.key === "ArrowDown") {
-		const row = tetromino.row + 1;
-		if (!isValidMove(tetromino.matrix, row, tetromino.col)) {
-			tetromino.row = row - 1;
-			placeTetromino();
-			return;
-		}
-		tetromino.row = row;
-	}
+        if (gameOver) return;
+        const key = e.key;
+        if (key === keyBindings.pause) {
+                togglePause();
+                return;
+        }
+        if (paused) return;
+        if (key === keyBindings.moveLeft || key === keyBindings.moveRight) {
+                const col = key === keyBindings.moveLeft ? tetromino.col - 1 : tetromino.col + 1;
+                if (isValidMove(tetromino.matrix, tetromino.row, col)) {
+                        tetromino.col = col;
+                }
+        }
+        if (key === keyBindings.rotate) {
+                const matrix = rotate(tetromino.matrix);
+                if (isValidMove(matrix, tetromino.row, tetromino.col)) {
+                        tetromino.matrix = matrix;
+                }
+        }
+        if (key === keyBindings.drop) {
+                const row = tetromino.row + 1;
+                if (!isValidMove(tetromino.matrix, row, tetromino.col)) {
+                        tetromino.row = row - 1;
+                        placeTetromino();
+                        return;
+                }
+                tetromino.row = row;
+        }
 });
 // Événements de boutons de contrôle
 document.getElementById("deplacer-gauche")
@@ -459,11 +497,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
         let blockSpeedSelect = document.getElementById("block-speed");
         let gridSelect = document.getElementById("grid");
-	let menu = document.getElementById("menu");
-	let menuItems = Array.from(menu.getElementsByClassName("menu-item"));
-	let containers = Array.from(document.getElementsByClassName("container"));
-	menuItems.forEach((item) => {
-		item.addEventListener("click", function() {
+        let menu = document.getElementById("menu");
+        let menuItems = Array.from(menu.getElementsByClassName("menu-item"));
+        let containers = Array.from(document.getElementsByClassName("container"));
+        menuItems.forEach((item) => {
+                item.addEventListener("click", function() {
 			menuItems.forEach((i) => i.classList.remove("active"));
 			this.classList.add("active");
 			const targetContainer = document.getElementById(this.dataset.target);
@@ -501,7 +539,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	menuMusic.play();
 	menuMusic.pause();
 	menuMusic.currentTime = 0;
-	let soundCheckbox = document.getElementById("sound");
+        let soundCheckbox = document.getElementById("sound");
         soundCheckbox.addEventListener("change", function() {
                 if (this.checked) {
                         menuMusic.play();
@@ -511,6 +549,46 @@ document.addEventListener("DOMContentLoaded", () => {
                         menuMusic.currentTime = 0;
                 }
         });
+       // Gestion des touches configurables
+       const keyInputs = document.querySelectorAll(".key-input");
+       keyInputs.forEach(input => {
+               const action = input.dataset.action;
+               input.value = keyBindings[action] || "";
+               input.addEventListener("keydown", e => {
+                       e.preventDefault();
+                       keyBindings[action] = e.key;
+                       input.value = e.key;
+                       saveKeyBindings();
+               });
+       });
+
+       // Navigation clavier dans le menu principal
+       const liveRegion = document.getElementById("live-region");
+       function announce(item) {
+               if (liveRegion) {
+                       liveRegion.textContent = item.textContent;
+               }
+       }
+       if (menuItems.length) {
+               menuItems[0].focus();
+               announce(menuItems[0]);
+       }
+       menuItems.forEach(item => item.addEventListener("focus", () => announce(item)));
+       menu.addEventListener("keydown", function(e) {
+               const index = menuItems.indexOf(document.activeElement);
+               if (e.key === "ArrowDown") {
+                       const next = (index + 1) % menuItems.length;
+                       menuItems[next].focus();
+                       announce(menuItems[next]);
+                       e.preventDefault();
+               }
+               else if (e.key === "ArrowUp") {
+                       const prev = (index - 1 + menuItems.length) % menuItems.length;
+                       menuItems[prev].focus();
+                       announce(menuItems[prev]);
+                       e.preventDefault();
+               }
+       });
 	// Récupérer la référence de la fenêtre modale et du bouton de démarrage
         modal = document.getElementById("modal");
 	// Fonctions pour chaque action du menu

@@ -8,6 +8,7 @@ let translations = {
     instructions: "Instructions",
     highScores: "High Scores",
     options: "Options",
+    linesLabel: "Lines",
     grid: "Grid:",
     none: "None",
     standard: "Standard",
@@ -44,6 +45,7 @@ let translations = {
     instructions: "Instructions",
     highScores: "Meilleurs scores",
     options: "Options",
+    linesLabel: "Lignes",
     grid: "Grille :",
     none: "Aucun",
     standard: "Standard",
@@ -80,6 +82,7 @@ let translations = {
     instructions: "Instrucciones",
     highScores: "Las mejores puntuaciones",
     options: "Opciones",
+    linesLabel: "Líneas",
     grid: "Rejilla:",
     none: "Ninguno",
     standard: "Estándar",
@@ -135,6 +138,7 @@ function updateLanguage() {
   document
     .getElementById("options-button")
     .setAttribute("aria-label", translation.options);
+  document.getElementById("lines-label").textContent = translation.linesLabel;
   document.querySelector("#instructions-text").innerHTML =
     translation.instructionsText;
   document.querySelector('label[for="grid"]').textContent = translation.grid;

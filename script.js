@@ -99,8 +99,8 @@ function placeTetromino() {
 			document.getElementById("score-content")
 				.textContent = score;
 			lines++;
-			document.getElementById("time-content")
-				.textContent = lines;
+                        document.getElementById("lines-content")
+                                .textContent = lines;
 			for (let r = row; r >= 0; r--) {
 				for (let c = 0; c < playfield[r].length; c++) {
 					playfield[r][c] = playfield[r - 1][c];
@@ -151,7 +151,7 @@ function startNewGame() {
         score = 0;
         lines = 0;
         document.getElementById("score-content").textContent = score;
-        document.getElementById("time-content").textContent = lines;
+        document.getElementById("lines-content").textContent = lines;
 
         // Réinitialiser le plateau de jeu
         playfield = [];
